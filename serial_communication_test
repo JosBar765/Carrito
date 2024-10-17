@@ -41,6 +41,9 @@ void loop() {
       case 'S':  // Encender LED 5
         digitalWrite(led5, HIGH);
         break;
+      case 'X':
+        apagarTodosLosLeds();
+        break;
     }
   }
 }
@@ -51,4 +54,3 @@ void apagarTodosLosLeds() {
   digitalWrite(led3, LOW);
   digitalWrite(led4, LOW);
   digitalWrite(led5, LOW);
-}
