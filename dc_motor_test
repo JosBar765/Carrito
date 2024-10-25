@@ -1,0 +1,61 @@
+#include <SoftwareSerial.h>
+
+//Configuracion de pines para el módulo BT
+SoftwareSerial bluetooth(10, 11); //RX, TX
+
+//Pines del puente H
+int IN1 = 2;
+int IN2 = 3;
+int IN3 = 4;
+int IN4 = 5;
+int ledF = 9;
+int ledB = 8;
+
+void setup() {
+  // Config de motores (Salida)
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ledF, OUTPUT);
+  pinMode(ledB, OUTPUT);
+
+  // Inicialización de la comunicación serial
+  Serial.begin(9600);       // Comunicación serial normal (USB)
+  bluetooth.begin(9600);    // Comunicación con el módulo Bluetooth (HC-05)
+
+}
+
+void loop() {
+  if (bluetooth.available() > 0) {
+    char comando = bluetooth.read();
+
+    switch (comando) {
+      case 'F':  // Adelante
+        digitalWrite(IN1, HIGH);
+        digitalWrite(IN2, LOW);
+        digitalWrite(IN3, HIGH);
+        digitalWrite(IN4, LOW);
+        digitalWrite(ledF, HIGH);
+        digitalWrite(ledB, LOW);
+        break;
+
+      case 'B':  // Atrás
+        digitalWrite(IN1, LOW);
+        digitalWrite(IN2, HIGH);
+        digitalWrite(IN3, LOW);
+        digitalWrite(IN4, HIGH);
+        digitalWrite(ledF, LOW);
+        digitalWrite(ledB, HIGH);
+        break;
+
+       default:
+       digitalWrite(IN1, LOW);
+       digitalWrite(IN2, LOW);
+       digitalWrite(IN3, LOW);
+       digitalWrite(IN4, LOW);
+       digitalWrite(ledF, LOW);
+       digitalWrite(ledB, LOW);
+       break;
+    }
+  }
+
+}
