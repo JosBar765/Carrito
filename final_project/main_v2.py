@@ -1,14 +1,13 @@
 import cv2 
 import serial
+import subprocessimport cv2 
+import serial
 import subprocess
 import sys
 import tkinter as tk
 from tkinter import messagebox
 from cvzone.HandTrackingModule import HandDetector
 
-COMPORT='COM7' # This comport can change eventually
-
-# Validation functions
 def isPortOpen(port):
     try:
         arduino = serial.Serial(port, 9600)
@@ -19,23 +18,6 @@ def isPortOpen(port):
 
 def camerasAvailable():
     return cv2.VideoCapture(0).isOpened()
-
-# Actual validations
-if not isPortOpen(COMPORT):
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Error de Puerto", f"El puerto {COMPORT} no está disponible.")
-    sys.exit()  # Close the program
-
-if not camerasAvailable():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Error de Cámara", f"El dispositivo no cuenta con una cámara.")
-    sys.exit()  # Close the program
-
-ARDUINO = serial.Serial(COMPORT, 9600)
-DETECTOR=HandDetector(detectionCon=0.8,maxHands=1) 
-VIDEO=cv2.VideoCapture(1) if cv2.VideoCapture(1).isOpened() else cv2.VideoCapture(0)
 
 def isHandFlipped(handLandmarkList): 
     # Consider 'flipped' as the back of the hand 
@@ -88,8 +70,26 @@ def clearConsole():
     subprocess.run("cls", shell=True)
 
 if __name__ == "__main__":
-    clearConsole()
+    COMPORT='COM7' # This comport can change eventually
     
+    if not isPortOpen(COMPORT):
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("Error de Puerto", f"El puerto {COMPORT} no está disponible.")
+        sys.exit()
+
+    if not camerasAvailable():
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("Error de Cámara", f"El dispositivo no cuenta con una cámara.")
+        sys.exit()
+    
+    ARDUINO = serial.Serial(COMPORT, 9600)
+    DETECTOR=HandDetector(detectionCon=0.8,maxHands=1) 
+    VIDEO=cv2.VideoCapture(1) if cv2.VideoCapture(1).isOpened() else cv2.VideoCapture(0)
+    
+    clearConsole()
+
     while True: 
         ret,frame=VIDEO.read() 
         hands,img=DETECTOR.findHands(frame, draw=True) 
